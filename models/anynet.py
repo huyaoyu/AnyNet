@@ -24,6 +24,7 @@ class AnyNet(nn.Module):
 
         if self.with_spn:
             try:
+                # import ipdb; ipdb.set_trace()
                 from .spn.modules.gaterecurrent2dnoind import GateRecurrent2dnoind
             except:
                 print('Cannot load spn model')
@@ -102,9 +103,12 @@ class AnyNet(nn.Module):
 
     def _build_volume_2d(self, feat_l, feat_r, maxdisp, stride=1):
         assert maxdisp % stride == 0  # Assume maxdisp is multiple of stride
+        # import ipdb; ipdb.set_trace()
         cost = torch.zeros(feat_l.size()[0], maxdisp//stride, feat_l.size()[2], feat_l.size()[3]).cuda()
         for i in range(0, maxdisp, stride):
-            cost[:, i//stride, :, :i] = feat_l[:, :, :, :i].abs().sum(1)
+            if ( i != 0 ):
+                cost[:, i//stride, :, :i] = feat_l[:, :, :, :i].abs().sum(1)
+            
             if i > 0:
                 cost[:, i//stride, :, i:] = torch.norm(feat_l[:, :, :, i:] - feat_r[:, :, :, :-i], 1, 1)
             else:
@@ -115,7 +119,7 @@ class AnyNet(nn.Module):
     def _build_volume_2d3(self, feat_l, feat_r, maxdisp, disp, stride=1):
         size = feat_l.size()
         batch_disp = disp[:,None,:,:,:].repeat(1, maxdisp*2-1, 1, 1, 1).view(-1,1,size[-2], size[-1])
-        batch_shift = torch.arange(-maxdisp+1, maxdisp).repeat(size[0])[:,None,None,None].cuda() * stride
+        batch_shift = torch.arange(-maxdisp+1, maxdisp).repeat(size[0])[:,None,None,None].type(torch.FloatTensor).cuda() * stride
         batch_disp = batch_disp - batch_shift
         batch_feat_l = feat_l[:,None,:,:,:].repeat(1,maxdisp*2-1, 1, 1, 1).view(-1,size[-3],size[-2], size[-1])
         batch_feat_r = feat_r[:,None,:,:,:].repeat(1,maxdisp*2-1, 1, 1, 1).view(-1,size[-3],size[-2], size[-1])
@@ -174,9 +178,10 @@ class AnyNet(nn.Module):
 class disparityregression2(nn.Module):
     def __init__(self, start, end, stride=1):
         super(disparityregression2, self).__init__()
-        self.disp = Variable(torch.arange(start*stride, end*stride, stride).view(1, -1, 1, 1).cuda(), requires_grad=False)
+        self.disp = Variable(torch.arange(start*stride, end*stride, stride).view(1, -1, 1, 1).type(torch.FloatTensor).cuda(), requires_grad=False)
 
     def forward(self, x):
         disp = self.disp.repeat(x.size()[0], 1, x.size()[2], x.size()[3])
+        # import ipdb; ipdb.set_trace()
         out = torch.sum(x * disp, 1, keepdim=True)
         return out

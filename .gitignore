@@ -1,0 +1,12 @@
+*.pyc
+Data
+Data/
+*.dat
+*.png
+*.jpg
+.vscode/
+*.code-workspace
+*.o
+*.so
+results/
+
