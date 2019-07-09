@@ -43,7 +43,7 @@ def dataloader(filepath):
     #             all_right_img.append(monkaa_path + '/' + dd + '/right/' + im)
 
     flying_path = filepath + [x for x in image if x == 'frames_cleanpass'][0]
-    flying_disp = filepath + [x for x in disp if x == 'frames_disparity'][0]
+    flying_disp = filepath + [x for x in disp if x == 'disparity'][0]
     flying_dir = flying_path + '/TRAIN/'
     subdir = ['A', 'B', 'C']
 

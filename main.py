@@ -65,7 +65,8 @@ def main():
         log.info(str(key) + ': ' + str(value))
 
     model = models.anynet.AnyNet(args)
-    model = nn.DataParallel(model).cuda()
+    # model = nn.DataParallel(model).cuda()
+    model = model.cuda()
     optimizer = optim.Adam(model.parameters(), lr=args.lr, betas=(0.9, 0.999))
     log.info('Number of model parameters: {}'.format(sum([p.data.nelement() for p in model.parameters()])))
 
