@@ -272,8 +272,8 @@ def test(dataloader, model, log, stride=1, savePath=None):
             # Save the images.
             save_test_results(savePath, batch_idx, \
                 imgL.cpu().numpy()[:, :, 4:, :], imgR.cpu().numpy()[:, :, 4:, :], disp_L.cpu().numpy(), output.cpu().numpy())
-            # For debugging use.
-            break
+            # # For debugging use.
+            # break
 
         info_str = '\t'.join(['Stage {} = {:.2f}({:.2f})'.format(x, EPEs[x].val, EPEs[x].avg) for x in range(stages)])
 
